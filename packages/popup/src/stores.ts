@@ -1,20 +1,20 @@
 import { writable } from "svelte/store";
 
-/*import { Message } from "@mirage/background/factories/Module.factory";
+import type { Message } from "@mirage/background/src/factories/Module.factory";
 
 const port = chrome.runtime.connect({
   name: "Mirage IPC",
 });
 
-/!*port.postMessage({
+/*port.postMessage({
   service: "youtube",
   send: { type: "ENABLE_FEATURE", feature: "feature_1" },
-});*!/
+});*/
 
 port.onMessage.addListener((msg: Message) => {
   switch (msg.service) {
   }
-});*/
+});
 
 function createModule() {
   const { subscribe, set, update } = writable({

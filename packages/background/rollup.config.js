@@ -15,7 +15,8 @@ export default {
     sourcemap: true,
     format: "umd",
     name: "background",
-    file: "lib/index.js",
+    // file: "lib/index.js",
+    dir: "lib",
   },
   plugins: [
     replace({
