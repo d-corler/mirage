@@ -26,8 +26,8 @@
     "url": "git+https://github.com/d-corler/mirage.git"
   },
   "scripts": {
-    "build": "rollup -c",
     "dev": "rollup -c -w",
+    "build": "rollup -c",
     "start": "sirv public",
     "validate": "svelte-check",
     "test": "echo \"Error: run tests from root\" && exit 1"

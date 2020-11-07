@@ -34,6 +34,9 @@ const manifestContent = {
     default_title: capitalizedName,
     default_popup: "popup/index.html",
   },
+  background: {
+    scripts: ["background/index.js"],
+  },
 };
 
 if (process.argv.includes("--develop")) {
@@ -68,6 +71,10 @@ spinner.succeed("Manifest written").start("Creating shortcuts...");
 await Promise.all([
   lnk([resolve(__root, "packages/popup/public")], __dist, {
     rename: "popup",
+    force: true,
+  }),
+  lnk([resolve(__root, "packages/background/lib")], __dist, {
+    rename: "background",
     force: true,
   }),
 ]);

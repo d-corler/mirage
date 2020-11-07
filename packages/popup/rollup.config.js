@@ -23,8 +23,8 @@ const serve = () => {
     writeBundle() {
       if (server) return;
       server = require("child_process").spawn(
-        "npm",
-        ["run", "start", "--", "--dev"],
+        "yarn",
+        ["start", "--", "--dev"],
         {
           stdio: ["ignore", "inherit", "inherit"],
           shell: true,
@@ -42,7 +42,7 @@ export default {
   output: {
     sourcemap: true,
     format: "iife",
-    name: "app",
+    name: "popup",
     file: "public/build/bundle.js",
   },
   plugins: [

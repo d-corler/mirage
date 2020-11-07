@@ -14,9 +14,9 @@
      */
     "sourceMap": true,
     /** Requests the runtime types from the svelte modules by default. Needed for TS files or else you get errors. */
-    "types": ["svelte"],
+    "types": ["chrome", "svelte"],
 
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
