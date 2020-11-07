@@ -1,7 +1,8 @@
-import { Message } from "./factories/Module.factory";
+import { Message, Response } from "./factories/Module.factory";
 
 // Modules
 import YouTubeModule from "./modules/YouTube.module";
+
 import { Unsubscribable } from "xstate";
 
 export enum Service {
@@ -50,10 +51,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
 const sendResponse = <S extends Service>(
   port: chrome.runtime.Port,
-  payload: {
-    service: S;
-    state: typeof services[S]["interpreter"]["state"];
-  }
+  payload: Response<S>
 ) => {
   console.log(`📤 Response sent from service "${payload.service}"`);
   port.postMessage(payload);

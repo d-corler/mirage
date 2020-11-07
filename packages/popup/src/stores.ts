@@ -1,18 +1,22 @@
 import { writable } from "svelte/store";
 
-import type { Message } from "@mirage/background/src/factories/Module.factory";
+import { Service } from "@mirage/background";
+
+import type {
+  Message,
+  Response,
+} from "@mirage/background/lib/packages/background/src/factories/Module.factory";
 
 const port = chrome.runtime.connect({
   name: "Mirage IPC",
 });
 
-/*port.postMessage({
-  service: "youtube",
-  send: { type: "ENABLE_FEATURE", feature: "feature_1" },
-});*/
-
-port.onMessage.addListener((msg: Message) => {
+// TODO : improve typing
+port.onMessage.addListener((msg: Response<Service.Youtube>) => {
   switch (msg.service) {
+    case Service.Youtube:
+      module.set(msg.state.context.feature_1, true);
+      break;
   }
 });
 
@@ -23,10 +27,31 @@ function createModule() {
 
   return {
     subscribe,
-    enable: () => update((n) => ({ ...n, feature_1: true })),
-    disable: () => update((n) => ({ ...n, feature_1: false })),
-    toggle: () => update((n) => ({ ...n, feature_1: !n.feature_1 })),
-    reset: () => {},
+    set: (value: boolean, fromIpc: boolean) => {
+      if (fromIpc) {
+        return update((n) => ({ ...n, feature_1: value }));
+      } else {
+        return port.postMessage({
+          service: "youtube",
+          send: { type: "SET_FEATURE", feature: "feature_1" },
+        });
+      }
+    },
+    enable: () =>
+      port.postMessage({
+        service: "youtube",
+        send: { type: "ENABLE_FEATURE", feature: "feature_1" },
+      }),
+    disable: () =>
+      port.postMessage({
+        service: "youtube",
+        send: { type: "DISABLE_FEATURE", feature: "feature_1" },
+      }),
+    toggle: () =>
+      port.postMessage({
+        service: "youtube",
+        send: { type: "TOGGLE_FEATURE", feature: "feature_1" },
+      }),
   };
 }
 

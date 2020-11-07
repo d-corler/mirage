@@ -8,6 +8,16 @@ export type Message = {
   send: any;
 };
 
+/*export type Response = {
+  service: Service;
+  state: ServiceInterpreter['state'];
+};*/
+
+export type Response<S extends Service> = {
+  service: S;
+  state: ServiceInterpreter["state"];
+};
+
 export type ServiceContext = {
   feature_1: boolean;
 };
@@ -20,7 +30,25 @@ export interface ServiceSchema extends StateSchema {
   };
 }
 
-export type ServiceEvent = { type: "ENABLE_FEATURE"; feature: string };
+export type ServiceEvent =
+  | {
+      type: "SET_FEATURE";
+      feature: keyof ServiceInterpreter["state"]["context"];
+      // TODO : improve typing
+      value: boolean;
+    }
+  | {
+      type: "ENABLE_FEATURE";
+      feature: keyof ServiceInterpreter["state"]["context"];
+    }
+  | {
+      type: "DISABLE_FEATURE";
+      feature: keyof ServiceInterpreter["state"]["context"];
+    }
+  | {
+      type: "TOGGLE_FEATURE";
+      feature: keyof ServiceInterpreter["state"]["context"];
+    };
 
 type ServiceInterpreter = Interpreter<
   ServiceContext,
@@ -57,8 +85,17 @@ export default abstract class ModuleFactory {
           disabled: {},
           enabled: {
             on: {
+              SET_FEATURE: {
+                actions: "processFeature",
+              },
               ENABLE_FEATURE: {
-                actions: "enableFeature",
+                actions: "processFeature",
+              },
+              DISABLE_FEATURE: {
+                actions: "processFeature",
+              },
+              TOGGLE_FEATURE: {
+                actions: "processFeature",
               },
             },
           },
@@ -66,9 +103,15 @@ export default abstract class ModuleFactory {
       },
       {
         actions: {
-          enableFeature: assign((ctx, event) => {
-            if (event.type === "ENABLE_FEATURE") {
+          processFeature: assign((ctx, event) => {
+            if (event.type === "SET_FEATURE") {
+              return { ...ctx, [event.feature]: event.value };
+            } else if (event.type === "ENABLE_FEATURE") {
               return { ...ctx, [event.feature]: true };
+            } else if (event.type === "DISABLE_FEATURE") {
+              return { ...ctx, [event.feature]: false };
+            } else if (event.type === "TOGGLE_FEATURE") {
+              return { ...ctx, [event.feature]: !ctx[event.feature] };
             }
             return { ...ctx };
           }),
